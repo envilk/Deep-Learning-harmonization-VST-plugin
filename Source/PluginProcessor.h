@@ -10,6 +10,7 @@
 
 #include <JuceHeader.h>
 #include <string>
+#include <sstream>
 using namespace std;
 
 //==============================================================================
@@ -23,7 +24,7 @@ public:
     ~HarmonizationmachineAudioProcessor() override;
 
     // New methods
-    void magentaSystemCall(juce::String inputPrimerMidiNotes);
+    void magentaSystemCall(juce::String inputPrimerMidiNotes, double temperature, double qpm);
     
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;

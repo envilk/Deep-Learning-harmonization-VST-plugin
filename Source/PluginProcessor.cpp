@@ -28,7 +28,7 @@ HarmonizationmachineAudioProcessor::~HarmonizationmachineAudioProcessor()
 {
 }
 
-void HarmonizationmachineAudioProcessor::magentaSystemCall(juce::String inputPrimerMidiNotes)
+void HarmonizationmachineAudioProcessor::magentaSystemCall(juce::String inputPrimerMidiNotes, double temperature, double qpm)
 {
     // Create script and magenta directories to execute everything
     system("mkdir $HOME/HarmonizationMachine");
@@ -40,11 +40,19 @@ void HarmonizationmachineAudioProcessor::magentaSystemCall(juce::String inputPri
 
     // Conversion from juce::String to const char*
     std::string inputPrimerMidiNotesString = inputPrimerMidiNotes.toStdString();
+    // Conversion from double to std::string
+    std::ostringstream strs1, strs2;
+    strs1 << temperature;
+    strs2 << qpm;
+    std::string inputTemperature = " --temperature="+strs1.str();
+    std::string inputQpm = " --qpm="+strs2.str();
+    //num-outputs
+    //num-steps
 
     // Building the magenta model command
-    std::string polyphony_rnn_string_call_first_part = "polyphony_rnn_generate --bundle_file=${BUNDLE_PATH} --output_dir=$HOME/HarmonizationMachine/outputs --num_outputs=1 --num_steps=64 --primer_melody=\"";
+    std::string polyphony_rnn_string_call_first_part = "polyphony_rnn_generate --bundle_file=${BUNDLE_PATH} --output_dir=$HOME/HarmonizationMachine/outputs --num_outputs=3 --num_steps=64 --primer_melody=\"";
     std::string polyphony_rnn_string_call_second_part = "\" --condition_on_primer=false --inject_primer_during_generation=true";
-    std::string full_polyphony_rnn_command = polyphony_rnn_string_call_first_part+ inputPrimerMidiNotesString +polyphony_rnn_string_call_second_part;
+    std::string full_polyphony_rnn_command = polyphony_rnn_string_call_first_part+ inputPrimerMidiNotesString +polyphony_rnn_string_call_second_part+inputTemperature+inputQpm;
 
     // Insert activate magenta enviroment command into the script
     system("echo 'eval \"$(conda shell.bash hook)\"' >> $HOME/HarmonizationMachine/input/script.sh");
@@ -178,18 +186,41 @@ void HarmonizationmachineAudioProcessor::processBlock (juce::AudioBuffer<float>&
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    // Make sure to reset the state if your inner loop is processing
-    // the samples and the outer loop is handling the channels.
-    // Alternatively, you can process the samples with the channels
-    // interleaved by keeping the same state.
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
-    {
-        auto* channelData = buffer.getWritePointer (channel);
+	juce::AudioPlayHead::CurrentPositionInfo hostInfo;
+	this->getPlayHead()->getCurrentPosition(hostInfo);
+	auto blockStartTime = hostInfo.timeInSamples;
 
-        // ..do something to the data...
-    }
+	juce::MidiMessage m;
+	int offset;
+
+	for (juce::MidiBuffer::Iterator i(midiMessages); i.getNextEvent(m, offset);)
+	{
+		if (m.isNoteOn())
+		{
+			//this->lastNoteNumber = m.getNoteNumber();
+			//this->lastNoteOnVelocity = m.getVelocity();
+			//this->lastNoteOnTS = blockStartTime + offset;
+			int var = (int)midiMessages.isEmpty();
+            auto var2 = juce::String(var);
+            dynamic_cast<HarmonizationmachineAudioProcessorEditor*>(getActiveEditor())->midiOutput.setText(var2, true);
+		}
+		else if (m.isNoteOff())
+		{
+			//this->lastNoteOffTS = blockStartTime + offset;
+		}
+		else if (m.isPitchWheel())
+		{
+			//this->lastPitchWheelValue = m.getPitchWheelValue();
+		}
+		else if (m.isControllerOfType(1))
+		{
+			//this->lastModWheelValue = m.getControllerValue();
+		}
+	}
+
+    /*int var = (int)midiMessages.isEmpty();
+    auto var2 = juce::String(var);
+    dynamic_cast<HarmonizationmachineAudioProcessorEditor*>(getActiveEditor())->midiOutput.setText(var2, true);*/
 }
 
 //==============================================================================

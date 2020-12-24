@@ -19,6 +19,8 @@ class HarmonizationmachineAudioProcessorEditor  : public juce::AudioProcessorEdi
 public:
     HarmonizationmachineAudioProcessorEditor (HarmonizationmachineAudioProcessor&);
     ~HarmonizationmachineAudioProcessorEditor() override;
+    
+    juce::TextEditor midiOutput;
 
     // New methods
     void processInput();
@@ -34,8 +36,10 @@ private:
     
     juce::TextButton generateButton{"Generate"};
     juce::TextEditor midiInput;
-    juce::TextEditor midiOutput;
-    juce::TextButton notification{ "Generated!" };
+    juce::Slider qpm;//0 to 200, default 120
+    juce::Slider temperature;//0.0 to 1.0, default 0
+    juce::Label labelDial1;
+    juce::Label labelDial2;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HarmonizationmachineAudioProcessorEditor)
 };
