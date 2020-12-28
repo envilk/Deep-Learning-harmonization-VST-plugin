@@ -8,6 +8,7 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#define DEBUGPLUGIN
 
 //==============================================================================
 HarmonizationmachineAudioProcessor::HarmonizationmachineAudioProcessor()
@@ -22,6 +23,9 @@ HarmonizationmachineAudioProcessor::HarmonizationmachineAudioProcessor()
                        )
 #endif
 {
+//#ifdef DEBUGPLUGIN
+    m_flogger = std::unique_ptr<juce::FileLogger>(juce::FileLogger::createDateStampedLogger("/home/enrique", "mylog", ".txt", "Welcome to plugin"));
+//#endif
 }
 
 HarmonizationmachineAudioProcessor::~HarmonizationmachineAudioProcessor()
@@ -173,54 +177,19 @@ bool HarmonizationmachineAudioProcessor::isBusesLayoutSupported (const BusesLayo
 
 void HarmonizationmachineAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-    juce::ScopedNoDenormals noDenormals;
-    auto totalNumInputChannels  = getTotalNumInputChannels();
-    auto totalNumOutputChannels = getTotalNumOutputChannels();
+    //buffer.clear();
 
-    // In case we have more outputs than inputs, this code clears any output
-    // channels that didn't contain input data, (because these aren't
-    // guaranteed to be empty - they may contain garbage).
-    // This is here to avoid people getting screaming feedback
-    // when they first compile a plugin, but obviously you don't need to keep
-    // this code if your algorithm always overwrites all the output channels.
-    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
-        buffer.clear (i, 0, buffer.getNumSamples());
-
-	juce::AudioPlayHead::CurrentPositionInfo hostInfo;
-	this->getPlayHead()->getCurrentPosition(hostInfo);
-	auto blockStartTime = hostInfo.timeInSamples;
-
-	juce::MidiMessage m;
-	int offset;
-
-	for (juce::MidiBuffer::Iterator i(midiMessages); i.getNextEvent(m, offset);)
-	{
-		if (m.isNoteOn())
-		{
-			//this->lastNoteNumber = m.getNoteNumber();
-			//this->lastNoteOnVelocity = m.getVelocity();
-			//this->lastNoteOnTS = blockStartTime + offset;
-			int var = (int)midiMessages.isEmpty();
-            auto var2 = juce::String(var);
-            dynamic_cast<HarmonizationmachineAudioProcessorEditor*>(getActiveEditor())->midiOutput.setText(var2, true);
-		}
-		else if (m.isNoteOff())
-		{
-			//this->lastNoteOffTS = blockStartTime + offset;
-		}
-		else if (m.isPitchWheel())
-		{
-			//this->lastPitchWheelValue = m.getPitchWheelValue();
-		}
-		else if (m.isControllerOfType(1))
-		{
-			//this->lastModWheelValue = m.getControllerValue();
-		}
-	}
-
-    /*int var = (int)midiMessages.isEmpty();
-    auto var2 = juce::String(var);
-    dynamic_cast<HarmonizationmachineAudioProcessorEditor*>(getActiveEditor())->midiOutput.setText(var2, true);*/
+    //#ifdef DEBUGPLUGIN
+    if(m_flogger)
+    {
+        //m_flogger->logMessage(std::to_string(midiMessages.getNumEvents()));
+        for (const juce::MidiMessageMetadata metadata : midiMessages)
+        {
+            //if (metadata.numBytes == 3)
+            m_flogger->logMessage(metadata.getMessage().getDescription());        
+        }
+    }
+    //#endif
 }
 
 //==============================================================================

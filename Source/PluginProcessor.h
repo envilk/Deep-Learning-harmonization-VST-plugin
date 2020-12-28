@@ -60,6 +60,8 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 private:
+    std::unique_ptr<juce::FileLogger> m_flogger;
+
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HarmonizationmachineAudioProcessor)
 };
