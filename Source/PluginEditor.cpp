@@ -62,7 +62,7 @@ void HarmonizationmachineAudioProcessorEditor::processInput()
     midiOutput.setText("", true);
     
     //Magenta model activation
-    audioProcessor.magentaSystemCall(midiInput.getText(), temperature.getValue(), qpm.getValue());
+    polyphonyRNN.generateHarmonization(midiInput.getText(), temperature.getValue(), qpm.getValue());
 
     //Generated notification
     midiOutput.setText("GENERATED!", true);

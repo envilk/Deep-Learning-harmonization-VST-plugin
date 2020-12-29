@@ -9,6 +9,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "MidiProcessor.h"
 #include <string>
 #include <sstream>
 using namespace std;
@@ -22,9 +23,6 @@ public:
     //==============================================================================
     HarmonizationmachineAudioProcessor();
     ~HarmonizationmachineAudioProcessor() override;
-
-    // New methods
-    void magentaSystemCall(juce::String inputPrimerMidiNotes, double temperature, double qpm);
     
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -62,6 +60,7 @@ public:
 private:
     std::unique_ptr<juce::FileLogger> m_flogger;
 
+    MidiProcessor midiProcessor;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HarmonizationmachineAudioProcessor)
 };

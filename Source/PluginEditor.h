@@ -10,6 +10,7 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "PolyphonyRNN.h"
 
 //==============================================================================
 /**
@@ -19,8 +20,6 @@ class HarmonizationmachineAudioProcessorEditor  : public juce::AudioProcessorEdi
 public:
     HarmonizationmachineAudioProcessorEditor (HarmonizationmachineAudioProcessor&);
     ~HarmonizationmachineAudioProcessorEditor() override;
-    
-    juce::TextEditor midiOutput;
 
     // New methods
     void processInput();
@@ -31,11 +30,13 @@ public:
 
 private:
     // This reference is provided as a quick way for your editor to
-    // access the processor object that created it.
+    // access the p
     HarmonizationmachineAudioProcessor& audioProcessor;
-    
+    PolyphonyRNN polyphonyRNN;
+
     juce::TextButton generateButton{"Generate"};
     juce::TextEditor midiInput;
+    juce::TextEditor midiOutput;
     juce::Slider qpm;//0 to 200, default 120
     juce::Slider temperature;//0.0 to 1.0, default 0
     juce::Label labelDial1;
