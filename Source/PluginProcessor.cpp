@@ -130,7 +130,13 @@ void HarmonizationmachineAudioProcessor::processBlock(juce::AudioBuffer<float> &
 {
     buffer.clear();
 
-    midiProcessor.process(midiMessages);
+    if (auto *currentPlayHead = getPlayHead())
+    {
+        juce::AudioPlayHead::CurrentPositionInfo hostInfo;
+
+        if (currentPlayHead->getCurrentPosition(hostInfo))
+            midiProcessor.process(midiMessages, hostInfo.isRecording, hostInfo.bpm);
+    }
 }
 
 //==============================================================================

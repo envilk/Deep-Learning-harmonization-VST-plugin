@@ -22,27 +22,26 @@ HarmonizationmachineAudioProcessorEditor::HarmonizationmachineAudioProcessorEdit
     addAndMakeVisible(generateButton);
     addAndMakeVisible(midiInput);
     addAndMakeVisible(midiOutput);
+    addAndMakeVisible(qpm);
+    addAndMakeVisible(labelDial1);
+    addAndMakeVisible(temperature);
+    addAndMakeVisible(labelDial2);
     
     qpm.setRange(10,200, 1);
     qpm.setValue(120);
     qpm.setSliderStyle(juce::Slider::Rotary);
     qpm.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 50, 30);
-    addAndMakeVisible(qpm);
-    addAndMakeVisible(labelDial1);
-    
-    labelDial1.setFont(juce::Font(16.0f, juce::Font::bold));
-    labelDial1.setColour(juce::Label::textColourId, juce::Colours::white);
-    labelDial1.setJustificationType(juce::Justification::centred);
+
+    //labelDial1.setFont(juce::Font(16.0f, juce::Font::bold));
+    //labelDial1.setColour(juce::Label::textColourId, juce::Colours::white);
+    //labelDial1.setJustificationType(juce::Justification::centred);
     labelDial1.setText("Tempo", juce::dontSendNotification);
     labelDial1.attachToComponent(&qpm, false);
-    
     
     temperature.setRange(0.1,5.0,0.1);
     temperature.setValue(0.1);
     temperature.setSliderStyle(juce::Slider::Rotary);
     temperature.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 50, 30);
-    addAndMakeVisible(temperature);
-    addAndMakeVisible(labelDial2);
     
     labelDial2.setFont(juce::Font(16.0f, juce::Font::bold));
     labelDial2.setColour(juce::Label::textColourId, juce::Colours::white);
@@ -62,10 +61,10 @@ void HarmonizationmachineAudioProcessorEditor::processInput()
     midiOutput.setText("", true);
     
     //Magenta model activation
-    polyphonyRNN.generateHarmonization(midiInput.getText(), temperature.getValue(), qpm.getValue());
+    polyphonyRNN.generateHarmonization(midiInput.getText(), temperature.getValue(), qpm.getValue(), midiProcessor.inputPath);
 
     //Generated notification
-    midiOutput.setText("GENERATED!", true);
+    midiOutput.setText("The generated files can be found at: /home/enrique/HarmonizationMachine/outputs", true);
 }
 
 //==============================================================================
@@ -89,4 +88,5 @@ void HarmonizationmachineAudioProcessorEditor::resized()
     temperature.setBounds(parameters);
     midiInput.setBounds(midiInputArea);
     midiOutput.setBounds(midiOutputArea);
+    
 }
