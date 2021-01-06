@@ -22,6 +22,7 @@ HarmonizationmachineAudioProcessor::HarmonizationmachineAudioProcessor()
       )
 #endif
 {
+    tempoFromEditor = 120;
 }
 
 HarmonizationmachineAudioProcessor::~HarmonizationmachineAudioProcessor()
@@ -135,7 +136,7 @@ void HarmonizationmachineAudioProcessor::processBlock(juce::AudioBuffer<float> &
         juce::AudioPlayHead::CurrentPositionInfo hostInfo;
 
         if (currentPlayHead->getCurrentPosition(hostInfo))
-            midiProcessor.process(midiMessages, hostInfo.isRecording, hostInfo.bpm);
+            midiProcessor.process(midiMessages, hostInfo.isRecording, tempoFromEditor);
     }
 }
 
@@ -162,6 +163,12 @@ void HarmonizationmachineAudioProcessor::setStateInformation(const void *data, i
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+}
+
+// Setter tempo
+void HarmonizationmachineAudioProcessor::setTempoFromEditor(double tempo)
+{
+    tempoFromEditor = tempo;
 }
 
 //==============================================================================

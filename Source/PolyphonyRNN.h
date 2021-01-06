@@ -16,7 +16,7 @@ class PolyphonyRNN
 {
 private:
 public:
-  void generateHarmonization(juce::String inputPrimerMidiNotes, double temperature, double qpm, string inputPath)
+  void generateHarmonization(double temperature, std::string inputPath)
   {
     // Create script and magenta directories to execute everything
     system("mkdir $HOME/HarmonizationMachine");
@@ -26,21 +26,16 @@ public:
     system("chmod +x $HOME/HarmonizationMachine/input/script.sh");
     system("echo '#!/bin/bash' >> $HOME/HarmonizationMachine/input/script.sh");
 
-    // Conversion from juce::String to const char*
-    std::string inputPrimerMidiNotesString = inputPrimerMidiNotes.toStdString();
     // Conversion from double to std::string
-    std::ostringstream strs1, strs2;
+    std::ostringstream strs1;
     strs1 << temperature;
-    strs2 << qpm;
     std::string inputTemperature = " --temperature=" + strs1.str();
-    std::string inputQpm = " --qpm=" + strs2.str();
     //num-outputs
-    //num-steps
 
     // Building the magenta model command
     std::string polyphony_rnn_string_call_first_part = "polyphony_rnn_generate --bundle_file=${BUNDLE_PATH} --output_dir=$HOME/HarmonizationMachine/outputs --num_outputs=3 --num_steps=200 --primer_midi=\"";
     std::string polyphony_rnn_string_call_second_part = "\" --condition_on_primer=false --inject_primer_during_generation=true";
-    std::string full_polyphony_rnn_command = polyphony_rnn_string_call_first_part + inputPath + polyphony_rnn_string_call_second_part + inputTemperature + inputQpm;
+    std::string full_polyphony_rnn_command = polyphony_rnn_string_call_first_part + inputPath + polyphony_rnn_string_call_second_part + inputTemperature;
 
     // Insert activate magenta enviroment command into the script
     system("echo 'eval \"$(conda shell.bash hook)\"' >> $HOME/HarmonizationMachine/input/script.sh");

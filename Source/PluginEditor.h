@@ -37,10 +37,9 @@ private:
     MidiProcessor midiProcessor;
 
     juce::TextButton generateButton{"Generate"};
-    juce::TextEditor midiInput;
     juce::TextEditor midiOutput;
-    juce::Slider qpm;//0 to 200, default 120
-    juce::Slider temperature;//0.0 to 1.0, default 0
+    juce::Slider tempo;//1 to 200, default 120
+    juce::Slider temperature;//0.1 to 5.0, default 0.1
     juce::Label labelDial1;
     juce::Label labelDial2;
 

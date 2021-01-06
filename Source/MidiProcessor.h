@@ -62,7 +62,7 @@ public:
 #ifdef DEBUGPLUGIN
                 if (m_flogger)
                 {
-                    //m_flogger->logMessage(currentMessage.getDescription());
+                    m_flogger->logMessage(std::to_string(tempo));
                     //isRecording ? m_flogger->logMessage("true") : m_flogger->logMessage("false");
                 }
 #endif
@@ -77,7 +77,7 @@ public:
             tempoEvent.setTimeStamp(0);
             mms.addEvent(tempoEvent);
             mms.updateMatchedPairs();
-            mms.sort();
+            mms.sort(); 
 
             midiFile.setTicksPerQuarterNote(960);
             midiFile.addTrack(mms);
