@@ -15,8 +15,15 @@
 class PolyphonyRNN
 {
 private:
+  std::string inputPath;
+
 public:
-  void generateHarmonization(double temperature, std::string inputPath)
+  void setInputPath(std::string p_inputPath)
+  {
+    inputPath = p_inputPath;
+  }
+
+  void generateHarmonization(double temperature)
   {
     // Create script and magenta directories to execute everything
     system("mkdir $HOME/HarmonizationMachine");

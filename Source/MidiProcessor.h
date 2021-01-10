@@ -62,8 +62,7 @@ public:
 #ifdef DEBUGPLUGIN
                 if (m_flogger)
                 {
-                    m_flogger->logMessage(std::to_string(tempo));
-                    //isRecording ? m_flogger->logMessage("true") : m_flogger->logMessage("false");
+                    m_flogger->logMessage(currentMessage.getDescription());
                 }
 #endif
             }
