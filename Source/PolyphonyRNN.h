@@ -23,7 +23,22 @@ public:
     inputPath = p_inputPath;
   }
 
-  void generateHarmonization(double temperature)
+  std::string selectModel(int id)
+  {
+    std::string model;
+    switch (id)
+    {
+    case 2:
+      model = "jazz_polyphony_rnn.mag";
+      break;
+    default:
+      model = "polyphony_rnn.mag";
+      break;
+    }
+    return "echo 'BUNDLE_PATH=$HOME/Descargas/BUNDLES/"+model+"' >> $HOME/HarmonizationMachine/input/script.sh";
+  }
+
+  void generateHarmonization(double temperature, int modelId)
   {
     // Create script and magenta directories to execute everything
     system("mkdir $HOME/HarmonizationMachine");
@@ -49,7 +64,8 @@ public:
     system("echo 'conda activate magenta' >> $HOME/HarmonizationMachine/input/script.sh");
 
     // Write the bundle path into the script (.mag file has to be downloaded from https://github.com/magenta/magenta/tree/master/magenta/models/polyphony_rnn)
-    system("echo 'BUNDLE_PATH=$HOME/Descargas/BUNDLES/polyphony_rnn.mag' >> $HOME/HarmonizationMachine/input/script.sh");
+    const char *bundleCommand = selectModel(modelId).c_str();
+    system(bundleCommand);
 
     std::string bash = "echo '";
     std::string redirect = "' >> $HOME/HarmonizationMachine/input/script.sh";

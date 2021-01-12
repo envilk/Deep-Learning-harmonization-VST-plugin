@@ -6,10 +6,8 @@
               pluginFormats="buildStandalone,buildVST3">
   <MAINGROUP id="iC2t95" name="Harmonization machine">
     <GROUP id="{110AE773-35B6-9A1C-2035-166BACEC81ED}" name="Source">
-      <FILE id="EnC0UO" name="InputFileBrowser.h" compile="0" resource="0"
-            file="Source/InputFileBrowser.h"/>
-      <FILE id="NADl8X" name="InputDragAndDrop.h" compile="0" resource="0"
-            file="Source/InputDragAndDrop.h"/>
+      <FILE id="nvCrAu" name="TreeViewItemComponent.h" compile="0" resource="0"
+            file="Source/TreeViewItemComponent.h"/>
       <FILE id="TmnpnY" name="MidiProcessor.h" compile="0" resource="0" file="Source/MidiProcessor.h"/>
       <FILE id="ys1Amu" name="PolyphonyRNN.h" compile="0" resource="0" file="Source/PolyphonyRNN.h"/>
       <FILE id="XdDvg7" name="PluginProcessor.cpp" compile="1" resource="0"

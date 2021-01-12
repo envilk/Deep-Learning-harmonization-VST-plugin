@@ -12,7 +12,7 @@
 #include "PluginProcessor.h"
 #include "PolyphonyRNN.h"
 #include "MidiProcessor.h"
-#include "InputFileBrowser.h"
+#include "TreeViewItemComponent.h"
 
 //==============================================================================
 /**
@@ -40,14 +40,14 @@ private:
     HarmonizationmachineAudioProcessor& audioProcessor;
     PolyphonyRNN polyphonyRNN;
     MidiProcessor midiProcessor;
-    //InputFileBrowser inputFileBrowser;
-    //OutputDragAndDrop outputDragAndDrop;
 
     juce::TextButton generateButton{"Generate"};
     juce::Slider tempo;//1 to 200, default 120
     juce::Slider temperature;//0.1 to 5.0, default 0.1
-    juce::Label labelDial1;
-    juce::Label labelDial2;
+    juce::ComboBox modelComboBox  { "Model" };
+    juce::Label tempoDial;
+    juce::Label temperatureDial;
+    juce::Label modelLabel;
 
     juce::TimeSliceThread thread  { "file tree browser" };
     juce::DirectoryContentsList directoryList {nullptr, thread};
@@ -55,6 +55,9 @@ private:
     juce::Label explanation { {}, "Select a MIDI file in the treeview above" };
 
     bool isFileDoubleClicked = false;
+
+    TreeViewItemComponent* itemSelectedAsComponent;
+    std::vector<TreeViewItemComponent*> itemVector;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HarmonizationmachineAudioProcessorEditor)
 };
