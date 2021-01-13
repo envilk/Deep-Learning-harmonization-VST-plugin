@@ -13,17 +13,24 @@
 HarmonizationmachineAudioProcessorEditor::HarmonizationmachineAudioProcessorEditor(HarmonizationmachineAudioProcessor &p)
     : AudioProcessorEditor(&p), audioProcessor(p)
 {
-    setSize(600, 620);
+    setSize(600, 550);
 
     generateButton.onClick = [this]() { processInput(); };
 
     tempo.onValueChange = [this]() { audioProcessor.setTempoFromEditor(tempo.getValue()); };
 
-    modelComboBox.addItem ("Bach chorales model", 1);
-    modelComboBox.addItem ("Jazz model", 2);
+    modelComboBox.addItem ("Bach chorales", 1);
+    modelComboBox.addItem ("Jazz", 2);
 
     modelComboBox.setSelectedId(1);
 
+    metronomeComponent.setImage(metronome);
+    diceComponent.setImage(dice);
+    networkComponent.setImage(network);
+
+    addAndMakeVisible(metronomeComponent);
+    addAndMakeVisible(diceComponent);
+    addAndMakeVisible(networkComponent);
     addAndMakeVisible(generateButton);
     addAndMakeVisible(tempo);
     addAndMakeVisible(tempoDial);
@@ -46,14 +53,14 @@ HarmonizationmachineAudioProcessorEditor::HarmonizationmachineAudioProcessorEdit
     modelComboBox.setEditableText(false);
     modelComboBox.setJustificationType(juce::Justification::centred);
 
-    modelLabel.setSize(200, 50);
+    modelLabel.setSize(200, 30);
     modelLabel.setFont(juce::Font(16.0f, juce::Font::bold));
     modelLabel.setColour(juce::Label::textColourId, juce::Colours::white);
     modelLabel.setJustificationType(juce::Justification::centred);
-    modelLabel.setText("Choose a machine learning model", juce::dontSendNotification);
+    modelLabel.setText("Harmonization style", juce::dontSendNotification);
 
     temperature.setRange(0.1, 5.0, 0.1);
-    temperature.setValue(0.1);
+    temperature.setValue(1.0);
     temperature.setSliderStyle(juce::Slider::Rotary);
     temperature.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 50, 30);
 
@@ -100,7 +107,11 @@ void HarmonizationmachineAudioProcessorEditor::processInput()
 //==============================================================================
 void HarmonizationmachineAudioProcessorEditor::paint(juce::Graphics &g)
 {
-        g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId)); 
+    g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId)); 
+    g.setColour(juce::Colours::white);
+    g.strokePath(path_parameter1, juce::PathStrokeType (0.5f));
+    g.strokePath(path_parameter2, juce::PathStrokeType (0.5f));
+    g.strokePath(path_parameter3, juce::PathStrokeType (0.5f));
 }
 
 void HarmonizationmachineAudioProcessorEditor::resized()
@@ -109,17 +120,34 @@ void HarmonizationmachineAudioProcessorEditor::resized()
     juce::Rectangle<int> generateButtonArea = parameter1.removeFromBottom(40);
     juce::Rectangle<int> parameter2 = parameter1.removeFromRight(400);
     juce::Rectangle<int> parameter3 = parameter2.removeFromRight(200);
-    juce::Rectangle<int> inputFileBrowserArea = getLocalBounds().removeFromBottom(300);
+    juce::Rectangle<int> inputFileBrowserArea = getLocalBounds().removeFromBottom(230);
+
+    float cornerSize = 5;
+    path_parameter1.addRoundedRectangle(parameter1.getTopLeft().getX(),parameter1.getTopLeft().getY(),parameter1.getWidth(),
+    parameter1.getHeight(),cornerSize);
+
+    path_parameter2.addRoundedRectangle(parameter2.getTopLeft().getX(),parameter2.getTopLeft().getY(),parameter2.getWidth(),
+    parameter2.getHeight(),cornerSize);
+
+    path_parameter3.addRoundedRectangle(parameter3.getTopLeft().getX(),parameter3.getTopLeft().getY(),parameter3.getWidth(),
+    parameter3.getHeight(),cornerSize);
+
     generateButton.setBounds(generateButtonArea);
 
     tempoDial.setBounds(parameter1);
     tempo.setBounds(parameter1);
 
+    metronomeComponent.setBounds(parameter1.removeFromBottom(200).removeFromTop(80));
+
     modelLabel.setBounds(parameter2);
-    modelComboBox.setBounds(parameter2);
+    modelComboBox.setBounds(parameter2.removeFromBottom(90).removeFromTop(30));
+
+    networkComponent.setBounds(parameter2.removeFromBottom(110).removeFromTop(80));
 
     temperatureDial.setBounds(parameter3);
     temperature.setBounds(parameter3);
+
+    diceComponent.setBounds(parameter3.removeFromBottom(200).removeFromTop(80));
 
     inputFileBrowser.setBounds(inputFileBrowserArea);
     explanation.setBounds(inputFileBrowserArea.removeFromRight(260).removeFromBottom(20));
@@ -133,9 +161,6 @@ void HarmonizationmachineAudioProcessorEditor::fileDoubleClicked(const juce::Fil
 }
 
 void HarmonizationmachineAudioProcessorEditor::selectionChanged() {}
-void HarmonizationmachineAudioProcessorEditor::fileClicked(const juce::File &file, const juce::MouseEvent &) 
-{
-    itemVector.push_back(new TreeViewItemComponent(inputFileBrowser.getSelectedItem(0), file));
-}
+void HarmonizationmachineAudioProcessorEditor::fileClicked(const juce::File &file, const juce::MouseEvent &) {}
 void HarmonizationmachineAudioProcessorEditor::browserRootChanged(const juce::File &) {}
 

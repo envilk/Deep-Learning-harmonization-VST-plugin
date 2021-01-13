@@ -12,7 +12,6 @@
 #include "PluginProcessor.h"
 #include "PolyphonyRNN.h"
 #include "MidiProcessor.h"
-#include "TreeViewItemComponent.h"
 
 //==============================================================================
 /**
@@ -46,8 +45,16 @@ private:
     juce::Slider temperature;//0.1 to 5.0, default 0.1
     juce::ComboBox modelComboBox  { "Model" };
     juce::Label tempoDial;
-    juce::Label temperatureDial;
+    juce::Label temperatureDial; 
     juce::Label modelLabel;
+
+    //auto metronome = juce::ImageCache::getFromMemory (juce::BinaryData, juce::BinaryData::file_pngSize);
+    juce::Image metronome = juce::PNGImageFormat::loadFrom(juce::File("/home/enrique/Descargas/juce-6.0.5-linux/JUCE/PROJECTS/Harmonization machine/metronome.png"));
+    juce::Image dice = juce::PNGImageFormat::loadFrom(juce::File("/home/enrique/Descargas/juce-6.0.5-linux/JUCE/PROJECTS/Harmonization machine/dice.png"));
+    juce::Image network = juce::PNGImageFormat::loadFrom(juce::File("/home/enrique/Descargas/juce-6.0.5-linux/JUCE/PROJECTS/Harmonization machine/network.png"));
+    juce::ImageComponent metronomeComponent;
+    juce::ImageComponent diceComponent;
+    juce::ImageComponent networkComponent;
 
     juce::TimeSliceThread thread  { "file tree browser" };
     juce::DirectoryContentsList directoryList {nullptr, thread};
@@ -56,8 +63,7 @@ private:
 
     bool isFileDoubleClicked = false;
 
-    TreeViewItemComponent* itemSelectedAsComponent;
-    std::vector<TreeViewItemComponent*> itemVector;
+    juce::Path path_parameter1, path_parameter2, path_parameter3;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HarmonizationmachineAudioProcessorEditor)
 };

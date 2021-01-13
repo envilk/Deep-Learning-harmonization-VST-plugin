@@ -469,4 +469,4 @@ build/intermediate/Debug/PluginProcessor_a059e380.o: \
  /home/enrique/Descargas/juce-6.0.5-linux/JUCE/modules/juce_gui_extra/misc/juce_LiveConstantEditor.h \
  /home/enrique/Descargas/juce-6.0.5-linux/JUCE/modules/juce_gui_extra/misc/juce_AnimatedAppComponent.h \
  ../../Source/MidiProcessor.h ../../Source/PluginEditor.h \
- ../../Source/PolyphonyRNN.h ../../Source/TreeViewItemComponent.h
+ ../../Source/PolyphonyRNN.h
