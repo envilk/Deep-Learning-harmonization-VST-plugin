@@ -17,6 +17,26 @@ HarmonizationmachineAudioProcessorEditor::HarmonizationmachineAudioProcessorEdit
 
     generateButton.onClick = [this]() { processInput(); };
 
+    showHideFileBrowserButton.onClick = [this]() 
+    { 
+        if(showHideFileBrowserButtonClicked)
+        {
+            showHideFileBrowserButtonClicked = false;
+            showHideFileBrowserButton.setButtonText("Show file browser");
+            inputFileBrowser.setVisible(false);
+            explanation.setVisible(false);
+            setSize(600, 380); 
+        }
+        else
+        {
+            showHideFileBrowserButtonClicked = true;
+            showHideFileBrowserButton.setButtonText("Hide file browser");
+            inputFileBrowser.setVisible(true);
+            explanation.setVisible(true);
+            setSize(600, 550);
+        }
+    };
+
     tempo.onValueChange = [this]() { audioProcessor.setTempoFromEditor(tempo.getValue()); };
 
     modelComboBox.addItem("Bach chorales", 1);
@@ -45,6 +65,7 @@ HarmonizationmachineAudioProcessorEditor::HarmonizationmachineAudioProcessorEdit
     addAndMakeVisible(numStepsLabel);
     addAndMakeVisible(numOutputs);
     addAndMakeVisible(numOutputsLabel);
+    addAndMakeVisible(showHideFileBrowserButton);
 
     tempo.setRange(10, 200, 1);
     tempo.setValue(120);
@@ -143,6 +164,7 @@ void HarmonizationmachineAudioProcessorEditor::processInput()
     else
         isFileDoubleClicked = false;
 
+    //Generate harmonization
     polyphonyRNN.generateHarmonization(temperature.getValue(), modelComboBox.getSelectedId(), 
         primerKeyComboBox.getSelectedId(), primerKeyToggle.getToggleState(), harmonizeToggle.getToggleState(),
         numSteps.getValue(), numOutputs.getValue());
@@ -188,8 +210,10 @@ void HarmonizationmachineAudioProcessorEditor::resized()
     juce::Rectangle<int> parameter5 = parameter4.removeFromRight(450);
     juce::Rectangle<int> parameter6 = parameter5.removeFromRight(300);
     juce::Rectangle<int> parameter7 = parameter6.removeFromRight(150);    
-    juce::Rectangle<int> inputFileBrowserArea = getLocalBounds().removeFromBottom(210);
+    
+    juce::Rectangle<int> inputFileBrowserArea = getLocalBounds().removeFromBottom(170);
 
+    juce::Rectangle<int> showHideFileBrowserButtonArea = getLocalBounds().removeFromTop(380).removeFromBottom(40);
 
     path_parameter4.addRoundedRectangle(parameter4.getTopLeft().getX(), parameter4.getTopLeft().getY(), parameter4.getWidth(),
                                         parameter4.getHeight(), cornerSize);
@@ -205,10 +229,12 @@ void HarmonizationmachineAudioProcessorEditor::resized()
 
     generateButton.setBounds(generateButtonArea);
 
+    showHideFileBrowserButton.setBounds(showHideFileBrowserButtonArea);
+
     tempoLabel.setBounds(parameter1label);
     tempo.setBounds(parameter1);
 
-    metronomeComponent.setBounds(parameter1.removeFromBottom(120).removeFromTop(80));
+    metronomeComponent.setBounds(parameter1.removeFromBottom(155).removeFromTop(80));
 
     modelLabel.setBounds(parameter2label);
     modelComboBox.setBounds(parameter2.removeFromBottom(30));
@@ -218,7 +244,7 @@ void HarmonizationmachineAudioProcessorEditor::resized()
     temperatureLabel.setBounds(parameter3label);
     temperature.setBounds(parameter3);
 
-    diceComponent.setBounds(parameter3.removeFromBottom(120).removeFromTop(80));
+    diceComponent.setBounds(parameter3.removeFromBottom(160).removeFromTop(80));
 
     primerKeyToggle.setBounds(parameter4.removeFromTop(30).removeFromLeft(120).removeFromRight(90));
     primerKeyComboBox.setBounds(parameter4.removeFromBottom(30));

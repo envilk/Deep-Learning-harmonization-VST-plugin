@@ -41,6 +41,8 @@ private:
     MidiProcessor midiProcessor;
 
     juce::TextButton generateButton{"Generate"};
+    juce::TextButton showHideFileBrowserButton{"Hide file browser"};
+    bool showHideFileBrowserButtonClicked = true;
     juce::Slider tempo;//1 to 200, default 120
     juce::Slider temperature;//0.1 to 5.0, default 0.1
     juce::ComboBox modelComboBox  { "Model" };

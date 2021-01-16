@@ -58,7 +58,7 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
     // Setter tempo
-    void setTempoFromEditor(double tempo);
+    void setTempoFromEditor(double p_tempo);
 
 private:
     MidiProcessor midiProcessor;

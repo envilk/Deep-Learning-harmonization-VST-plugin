@@ -166,9 +166,9 @@ void HarmonizationmachineAudioProcessor::setStateInformation(const void *data, i
 }
 
 // Setter tempo
-void HarmonizationmachineAudioProcessor::setTempoFromEditor(double tempo)
+void HarmonizationmachineAudioProcessor::setTempoFromEditor(double p_tempo)
 {
-    tempoFromEditor = tempo;
+    tempoFromEditor = p_tempo;
 }
 
 //==============================================================================

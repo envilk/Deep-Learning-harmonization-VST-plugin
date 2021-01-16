@@ -23,10 +23,10 @@ public:
     inputPath = p_inputPath;
   }
 
-  std::string selectModel(int id)
+  std::string selectModel(int p_id)
   {
     std::string model;
-    switch (id)
+    switch (p_id)
     {
     case 2: model = "jazz_polyphony_rnn.mag"; break;
     default: model = "polyphony_rnn.mag";break;
@@ -34,10 +34,10 @@ public:
     return "echo 'BUNDLE_PATH=$HOME/Descargas/BUNDLES/"+model+"' >> $HOME/HarmonizationMachine/input/script.sh";
   }
 
-  std::string selectKey(int id, bool primerKeyToggle)
+  std::string selectKey(int p_id, bool p_primerKeyToggle)
   {
     std::string key;
-    switch (id)
+    switch (p_id)
     {
     //Tonic chords (in order to estabilish a certain key for the harmonized melody)
     case 2: key = "[69,72,76]"; break;//La m
@@ -48,22 +48,22 @@ public:
     case 7: key = "[71,74,78]"; break;//Si m
     default: key = "[60,64,67]"; break; //Do M
     }
-    if(primerKeyToggle) return " --primer_pitches=\""+key+"\" --condition_on_primer=true";
-    else return " --primer_pitches=\""+key+"\" --condition_on_primer=false"; 
+    if(p_primerKeyToggle) return " --condition_on_primer=true --primer_pitches=\""+key+"\"";
+    else return " --condition_on_primer=false"; 
   }
 
-  std::string numSteps(double steps)
+  std::string numSteps(int p_steps)
   {
-    return " --num_steps="+std::to_string(steps);
+    return " --num_steps="+std::to_string(p_steps);
   }
 
-  std::string numOutputs(double outputs)
+  std::string numOutputs(int p_outputs)
   {
-    return " --num_outputs="+std::to_string(outputs);
+    return " --num_outputs="+std::to_string(p_outputs);
   }
 
-  void generateHarmonization(double p_temperature, int p_modelId, int p_keyId, bool p_primerKeyToggle,
-   bool p_harmonizeToggle, double p_numSteps, double p_numOutpus)
+  void generateHarmonization(int p_temperature, int p_modelId, int p_keyId, bool p_primerKeyToggle,
+   bool p_harmonizeToggle, int p_numSteps, int p_numOutpus)
   {
     // Create script and magenta directories to execute everything
     system("mkdir $HOME/HarmonizationMachine");
@@ -72,27 +72,6 @@ public:
     system("> $HOME/HarmonizationMachine/input/script.sh");
     system("chmod +x $HOME/HarmonizationMachine/input/script.sh");
     system("echo '#!/bin/bash' >> $HOME/HarmonizationMachine/input/script.sh");
-
-    // Conversion from double to std::string
-    std::ostringstream strs1;
-    strs1 << p_temperature;
-    std::string inputTemperature = " --temperature=" + strs1.str();
-    //num-outputs
-
-    std::string primerKeyString = selectKey(p_keyId, p_primerKeyToggle);
-
-    std::string harmonizeString;
-    if(p_harmonizeToggle) harmonizeString = " --inject_primer_during_generation=true";
-    else p_harmonizeToggle = " --inject_primer_during_generation=false";
-
-    std::string numStepsString = numSteps(p_numSteps);
-
-    std::string numOutputsString = numSteps(p_numOutpus);
-
-    // Building the magenta model command
-    std::string polyphony_rnn_string_call_first_part = "polyphony_rnn_generate --bundle_file=${BUNDLE_PATH} --output_dir=$HOME/HarmonizationMachine/outputs --primer_midi=\"";
-    std::string polyphony_rnn_string_call_second_part = "\""+harmonizeString+primerKeyString+numStepsString+numOutputsString;
-    std::string full_polyphony_rnn_command = polyphony_rnn_string_call_first_part + inputPath + polyphony_rnn_string_call_second_part + inputTemperature;
 
     // Insert activate magenta enviroment command into the script
     system("echo 'eval \"$(conda shell.bash hook)\"' >> $HOME/HarmonizationMachine/input/script.sh");
@@ -103,11 +82,29 @@ public:
     const char *bundleCommand = bundleCommandString.c_str();
     system(bundleCommand);
 
-    std::string bash = "echo '";
+    // Building the magenta model command
+    std::string inputTemperature = " --temperature="+std::to_string(p_temperature);
+
+    std::string primerKeyString = selectKey(p_keyId, p_primerKeyToggle);
+
+    std::string harmonizeString;
+    if(p_harmonizeToggle) harmonizeString = " --inject_primer_during_generation=true";
+    else p_harmonizeToggle = " --inject_primer_during_generation=false";
+
+    std::string numStepsString = numSteps(p_numSteps);
+
+    std::string numOutputsString = numOutputs(p_numOutpus);
+    
+    std::string polyphony_rnn_string_call_first_part = "polyphony_rnn_generate --bundle_file=${BUNDLE_PATH} --output_dir=$HOME/HarmonizationMachine/outputs --primer_midi=\"";
+    std::string polyphony_rnn_string_call_second_part = "\""+harmonizeString+primerKeyString+numStepsString+numOutputsString;
+    std::string full_polyphony_rnn_command = polyphony_rnn_string_call_first_part + inputPath + polyphony_rnn_string_call_second_part + inputTemperature;
+
+    // Full magenta into the script
+    std::string echo = "echo '";
     std::string redirect = "' >> $HOME/HarmonizationMachine/input/script.sh";
-    std::string command = bash + full_polyphony_rnn_command + redirect;
-    const char *finalModelCommand = command.c_str();
-    system(finalModelCommand);
+    std::string full_polyphony_rnn_command_to_execute = echo + full_polyphony_rnn_command + redirect;
+    const char *full_polyphony_rnn_command_as_const_char = full_polyphony_rnn_command_to_execute.c_str();
+    system(full_polyphony_rnn_command_as_const_char);
 
     // Execute script.sh
     system("$HOME/HarmonizationMachine/input/script.sh");
